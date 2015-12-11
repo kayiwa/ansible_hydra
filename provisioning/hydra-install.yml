@@ -1,0 +1,11 @@
+---
+- name: Install a Hydra Head
+  hosts: hydra-head
+
+  roles:
+    - common
+    - fedora
+    - clamav
+    - sufia
+    - solr
+    - resque-pool
