@@ -1,0 +1,29 @@
+---
+- name: Install tomcat 7 and admin
+  apt: "name={{ item }} state=present"
+  with_items:
+    - tomcat7
+    - tomcat7-admin
+
+- name: require tomcat to user Oracle Java
+  replace: dest=/etc/init.d/tomcat7 regexp='java-7-oracle' replace='java-8-oracle'
+
+- name: download fedora from repo
+  become: yes
+  get_url: url=http://repo1.maven.org/maven2/org/fcrepo/fcrepo-webapp/{{ fedora_version }}/fcrepo-webapp-{{ fedora_version }}.war  dest={{ install_path }}/fcrepo-webapp-{{ fedora_version }}.war timeout=100
+
+- name: make fedora data dir
+  file: owner=tomcat7 group=tomcat7 state=directory path=/var/local/fedora-data
+
+- name: check fedora.war
+  stat: path=/var/lib/tomcat7/webapps/fedora.war
+  register: fedora_war
+
+- name: copy over fedora.war
+  command: cp {{ install_path }}/fcrepo-webapp-{{ fedora_version }}.war /var/lib/tomcat7/webapps/fedora.war
+  when: fedora_war.stat.exists == False
+
+- name: create tomcat config and java options
+  template: src=tomcat7.j2 dest=/etc/default/tomcat7 
+  notify:
+    - restart tomcat7
