@@ -10,3 +10,29 @@
   with_items:
     - oracle-java8-installer
     - oracle-java8-set-default
+
+- name: Install Build dependencies
+  apt: "name={{ item }} state=present"
+  with_items:
+    - libsqlite3-dev
+    - build-essential
+    - git
+    - git-core
+    - sqlite3
+    - zlib1g-dev
+    - libreadline6
+    - libreadline6-dev
+    - libc6-dev
+    - ncurses-dev
+    - automake
+    - libtool
+    - bison
+    - pkg-config
+    - libyaml-dev
+    - libxml2-dev
+    - libxslt-dev
+    - autoconf
+    - curl
+    - imagemagick
+    - libcurl4-openssl-dev
+    - libxvidcore-dev
