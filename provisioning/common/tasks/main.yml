@@ -1,0 +1,12 @@
+---
+- name: Add Web Up8 Oracle Java OOS.
+  apt_repository: repo='ppa:webupd8team/java' update_cache=yes
+
+- name: Accept Oracle License
+  shell: echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | /usr/bin/debconf-set-selections
+
+- name: Install Oracle 8 Java
+  apt: "name={{ item }} state=present"
+  with_items:
+    - oracle-java8-installer
+    - oracle-java8-set-default
