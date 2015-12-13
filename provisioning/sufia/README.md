@@ -6,7 +6,7 @@ This role installs Sufia
 Dependencies
 ------------
 
-This will depend on the ansible_hydra.common role
+This will depend on the kayiwa.ansible_hydra.common and kayiwa.ansible_hydra.postgresql role
 
 License
 -------

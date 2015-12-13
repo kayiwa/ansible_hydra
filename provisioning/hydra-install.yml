@@ -4,6 +4,7 @@
 
   roles:
     - common
+    - postgresql
     - fedora
     - sufia
     - solr
