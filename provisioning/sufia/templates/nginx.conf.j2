@@ -1,0 +1,17 @@
+passenger_max_pool_size {{ passenger_instances }};
+passenger_pre_start http://{{ server_hostname }};
+limit_req_zone \$binary_remote_addr zone=clients:1m rate={{ nginx_client_rate }};
+server {
+    listen 80;
+    listen 443 ssl;
+    client_max_body_size 200M;
+    passenger_min_instances {{ passenger_instances }};
+    limit_req zone=clients burst={{ nginx_client_burst }} {{ nginx_burst_option }};
+    root {{ hydra_head_dir }}/public;
+    passenger_enabled on;
+    passenger_app_env {{ app_env }};
+    server_name {{ server_hostname }};
+    ssl_certificate {{ ssl_cert }};
+    ssl_certificate_key {{ ssl_key }};
+}
+
