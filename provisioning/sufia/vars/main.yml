@@ -1,0 +1,19 @@
+---
+install_dir: "/usr/local"
+fits_package: fits-0.6.2
+fits_dir: {{ install_dir }}/fits
+ruby_package: ruby2.2
+app_env: production
+passenger_instances: 2
+hydra_head: data-repo
+hydra_head_git_repo: "vtul/data-repo"
+hydra_head_git_branch: master
+hydra_head_dir: {{ install_dir }}/{{ hydra_head }}
+nginx_client_rate: 75r/s
+nginx_client_burst: 500
+nginx_burst_option: nodelay
+ssl_key_dir: "/etc/ssl/local/private"
+ssl_cert_dir: "/etc/ssl/local/certs"
+ssl_key: {{ ssl_key_dir }}/{{ hydra_head }}-key.pem
+ssl_cert: {{ ssl_cert_dir }}/{{ hydra_head }}-crt.pem
+rails_version: 4.2
