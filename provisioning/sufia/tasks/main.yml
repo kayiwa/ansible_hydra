@@ -1,0 +1,84 @@
+---
+- name: Install FITS dependencies
+  apt: "name={{ item }} state=present"
+  with_items:
+    - unzip
+    - wget
+
+- name: Download FITS
+  unarchive: src=http://projects.iq.harvard.edu/files/fits/files/{{ fits_package }}.zip dest=/{{ fits_dir }}/{{ fits_package }} copy=no
+
+- name: Permissions for FITS
+  file: path=/{{ fits_dir }}/{{ fits_package }}/fits.sh mode="a=x"
+
+- name: install ffmpeg repo
+  apt_repository: repo='ppa:mc3man/trusty-media' update_cache=yes
+
+- name: install ffmpeg
+  apt: name=ffmpeg state=present
+
+- name: install nodejs repo from nodesource 
+  command: curl -sL https://deb.nodesource.com/setup | bash -
+
+- name: install nodejs
+  apt: name=nodejs state=present
+
+- name: Install Redis, ImageMagick, PhantomJS, and Libre Office
+  apt: "name={{ item }} state=present"
+  with_items:
+    - redis-server
+    - imagemagick
+    - phantomjs
+    - libreoffice
+
+- name: Install Ruby via Brightbox repository
+  apt_repository: repo='ppa:brightbox/ruby-ng' update_cache=yes
+
+- name: Install ruby package
+  apt: name="name={{ item }} state=present"
+  with_items:
+    - {{ ruby_package }}
+    - {{ ruby_package }}-dev
+
+- name: Install Nginx and Passenger repo
+  apt_key: url=http://keyserver.ubuntu.com/pks/lookup?op=get&fingerprint=on&search=0x561F9B9CAC40B2F7 state=present
+
+- name: Install packages to enable apt over HTTPS
+  apt: name="{{ item }} state=present"
+  with_items:
+    - apt-transport-https
+    - ca-certificates
+
+- name: Add Phusion Passenger repo
+  apt_repository: repo='deb https://oss-binaries.phusionpassenger.com/apt/passenger trusty main'
+
+- name: Install nginx-extras and passenger
+  apt: name="{{ item }} state=present"
+  with_items:
+    - nginx-extras
+    - passenger
+
+- name: Remove the default nginx app's config
+  file: path=/etc/nginx/sites-available/default state=absent
+
+- name: Copy nginx.conf
+  template: src=nginx.conf.j2 dest=/etc/nginx/sites-available/{{ hydra_head }}
+
+- name:  Enable the site just created
+  file: src=/etc/nginx/sites-available/{{ hydra_head }} dest=/etc/nginx/sites-enabled/{{ hydra_head }} state=link
+
+- name: Start nginx
+  service: name=nginx state=started
+
+- name: install rails
+  gem: name=rails version={{ rails_version }} state=present 
+
+- name: build the rails app
+  command: rails new {{ hydra_head }} {{ hydra_head_dir }}
+
+- name: remove rdoc
+  file: path={{ hydra_head_dir }}/README.rdoc state=absent
+
+- name: clone the repo
+  git: repo=https://github.com/{{ hydra_head_git_repo }}.git dest={{ hydra_head_dir }} 
+
