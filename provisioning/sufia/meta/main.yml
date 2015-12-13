@@ -134,5 +134,5 @@ galaxy_info:
   #- system
   #- web
 dependencies: 
-  - common
-  - postgresql  
+  - { role: common }
+  - { role: postgresql }
