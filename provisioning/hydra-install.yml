@@ -5,7 +5,6 @@
   roles:
     - common
     - fedora
-    - clamav
     - sufia
     - solr
     - resque-pool
